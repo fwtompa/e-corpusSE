@@ -1,0 +1,48 @@
+MSGS_FILE
+/tables/message_list
+
+CHAR_CODES
+/tables/charcode_list
+
+TEXTS_FILE
+/tables/textindex
+
+SCOPES_FILE
+/tables/scope_list
+
+TEXTLOC
+/texts/
+
+COUNT_CMD
+/u/bin/sgrep -i -g xml -c -p /usr/bin/m4 -f /tables/.sgreprc 
+
+SEARCH_CMD
+/u/bin/sgrep -i -g xml -o "%s %e " -p /usr/bin/m4 -f /tables/.sgreprc 
+
+SEARCH_LOC
+-e 'LOC_REG()' 
+
+SEARCH_LOC_VAL
+-e 'LOC_VAL()' 
+
+SEARCH_MATCHES
+TERMS
+
+SPECS_DIR
+/specs/
+
+SPEC_NAMES
+speclist
+
+STRING_SUB_PROG
+/usr/bin/perl /tables/stringSub.plx 
+
+INDEX_PREFIX
+.idx.
+
+OUTLINE_FORMAT
+outline
+
+USAGE_LOG
+/tables/log
+

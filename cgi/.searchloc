@@ -1,0 +1,3 @@
+// this has to be set manually, for every new installation of the search engine
+// change /tables to the absolute path of the location of the directoryList file
+#define DIRECTORY_FILE "/tables/directoryList"

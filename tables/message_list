@@ -1,0 +1,160 @@
+title
+Alberti Magni e-corpus search
+Alberti Magni e-corpus rechercher
+
+header
+<TABLE WIDTH="100%"><TR><TD ALIGN="LEFT"><H2>Alberti Magni E-Corpus</H2></TD><TD ALIGN="RIGHT"><table border="1"><caption>Colour Key</caption><tr><td><font color="red">matched text</font></td><td><font color="darkGoldenRod">unedited forms</font></td><td><font color="green">corrected forms</font></td><td><font color="purple">transliterated Greek</font></td><td><font color="orchid">transliterated Hebrew</font></td></tr></table></TD></TR></TABLE>
+<TABLE WIDTH="100%"><TR><TD ALIGN="LEFT"><H2>Alberti Magni E-Corpus</H2></TD><TD ALIGN="RIGHT"><table border="1"><caption>l&eacute;gende de couleur</caption><tr><td><font color="red">les passages de la recherche</font></td><td><font color="darkGoldenRod">les formes fautives</font></td><td><font color="green">les corrections</font></td><td><font color="purple">les mots grecs translitt&eacute;r&eacute;s</font></td><td><font color="orchid">les mots h&eacute;breux translitt&eacute;r&eacute;s</font></td></tr></table></TD></TR></TABLE>
+
+instruct
+
+
+
+unnormalized
+Searching texts for exact matches (but ignoring capitalization)
+Recherche de textes pour des correspondances exactes (mais en ignorant la différence entre les majuscules et les minuscules)
+
+matchOK
+Search Results:
+R&eacute;sultats de la recherche:
+
+nesting
+ERROR: missing quotation marks or unbalanced parentheses or quotation marks (")
+ERREUR: guillemets (") asym&eacute;triques ou manquantes ou parenth&egrave;ses non &eacute;quilibr&eacute;es
+
+tooLong
+too long: truncated
+trop long: tronqu&eacute;
+
+noMatch
+No matches found in
+Mot/locution non retrouv&eacute; pour
+
+oneMatch
+match (instances) in
+mot ou locution (exemples) &agrave; retrouver pour
+
+nMatches
+matches (instances) in
+r&eacute;ponses (exemples) pour
+
+inAllTexts
+all selected texts
+tous les textes s&eacute;lectionn&eacute;s
+
+more
+Next
+Suivant
+
+back
+Previous
+Pr&eacute;c&eacute;dent
+
+word
+Word(s) or phrase(s) to be searched
+Mot(s) ou locution(s) &agrave; retrouver
+
+scope
+Regions to search
+Taille du contexte
+
+format
+Style sheet for display
+Affichage &agrave; l'&eacute;cran
+
+exact
+exact count
+mot/locution
+
+line
+line
+vers ou ligne
+
+window
+5 line window
+5 vers
+
+column
+column
+colonne
+
+page
+page
+page
+
+text
+Corpus
+Corpus vis&eacute;
+
+quantity
+Number of matches per text to display
+Nombre de r&eacute;sultats &agrave; afficher pour chaque texte
+
+start
+Continuing from which match?
+Affichage &agrave; partir de quel r&eacute;sultat
+
+new
+Start new search
+(Re)commencer l'interrogation
+
+cont
+Continue search
+Suite de l'interrogation
+
+trailer
+Alberti Magni e-corpus text search, St. Jerome's University/University of Waterloo
+Alberti Magni e-corpus texte de recherche, St. Jerome's University/University of Waterloo
+
+compiled
+Last compiled
+Compil&eacute; le
+
+lookMatches
+Look up matches
+Voir les occurrences
+
+chooseText
+choose text
+choisir texte
+
+allTexts
+All selectable texts searched by default; otherwise select which text(s) to search.
+Tous les textes s&eacute;lectionnables recherche par d&eacute;faut, sinon s&eacute;lectionnez le(s) &oelig;uvre(s) &agrave; rechercher.
+
+include
+Include texts fully available in the Editio Coloniensis
+Inclure les &oelig;uvres enti&egrave;rement disponible dans l'Editio Coloniensis
+
+exclude
+Exclude texts fully available in the Editio Coloniensis
+Exclure les &oelig;uvres enti&egrave;rement disponibles dans l'Editio Coloniensis
+
+exactMatch
+Start new search, matching spelling (i.e., find exact matches)
+(Re)commencer l'interrogation avec les orthographes non normalis&eacute;e (c.-a-d., trouver des correspondances exactes)
+
+normalize
+Start new search with normalized spelling (j/i, ae/e, etc.)
+(Re)commencer l'interrogation avec les orthographes normalis&eacute;s (j/i, ae/e, etc.)
+
+usingExact
+(using exact match)
+(en utilisant la correspondance exacte)
+
+usingNorm
+(using normalized spellings)
+(en utilisant des orthographes normalis&eacute;es)
+
+normalized
+<TABLE CELLPADDING="0"><TR><TD width="50%" valign="top">Searching texts with normalized spellings: removing diacritics, ignoring capitalization, ignoring "h" and apostrophe ('), using equivalence table at right, and ignoring repeated letters.</TD><TD valign="top"><TABLE border="1"><TR><TD><TABLE border="0"><TR><TD width="15" align="center">ae</TD><TD width="14"></TD><TD width="15" align="center">ci</TD><TD width="14"></TD><TD width="15" align="center">d</TD><TD width="14"></TD><TD width="15" align="center">j</TD><TD width="14"></TD><TD width="15" align="center">k</TD><TD width="14"></TD><TD width="15" align="center">m</TD><TD width="14"></TD><TD width="15" align="center">oe</TD><TD width="14"></TD><TD width="15" align="center">ph</TD><TD width="14"></TD><TD width="15" align="center">v</TD><TD width="14"></TD><TD width="15" align="center">y</TD></TR><TR><TD width="15" align="center">e</TD><TD width="14"></TD><TD width="15" align="center">ti</TD><TD width="14"></TD><TD width="15" align="center">t</TD><TD width="14"></TD><TD width="15" align="center">i</TD><TD width="14"></TD><TD width="15" align="center">c</TD><TD width="14"></TD><TD width="15" align="center">n</TD><TD width="14"></TD><TD width="15" align="center">e</TD><TD width="14"></TD><TD width="15" align="center">f</TD><TD width="14"></TD><TD width="15" align="center">u</TD><TD width="14"></TD><TD width="15" align="center">i</TD></TR></TABLE></TD></TR></TABLE></TD></TR></TABLE>
+<TABLE CELLPADDING="0"><TR><TD valign="top" width="50%">Rechercher des textes avec des orthographes normalisées: supprimer les signes diacritiques, ignorer la différence entre les majuscules et les minuscules, ignorer "h" et apostrophe ('), utiliser la table d'équivalence à droite et ignorer les lettres répétées.</TD><TD valign="top"><TABLE border="1"><TR><TD><TABLE border="0"><TR><TD width="15" align="center">ae</TD><TD width="14"></TD><TD width="15" align="center">ci</TD><TD width="14"></TD><TD width="15" align="center">d</TD><TD width="14"></TD><TD width="15" align="center">j</TD><TD width="14"></TD><TD width="15" align="center">k</TD><TD width="14"></TD><TD width="15" align="center">m</TD><TD width="14"></TD><TD width="15" align="center">oe</TD><TD width="14"></TD><TD width="15" align="center">ph</TD><TD width="14"></TD><TD width="15" align="center">v</TD><TD width="14"></TD><TD width="15" align="center">y</TD></TR><TR><TD width="15" align="center">e</TD><TD width="14"></TD><TD width="15" align="center">ti</TD><TD width="14"></TD><TD width="15" align="center">t</TD><TD width="14"></TD><TD width="15" align="center">i</TD><TD width="14"></TD><TD width="15" align="center">c</TD><TD width="14"></TD><TD width="15" align="center">n</TD><TD width="14"></TD><TD width="15" align="center">e</TD><TD width="14"></TD><TD width="15" align="center">f</TD><TD width="14"></TD><TD width="15" align="center">u</TD><TD width="14"></TD><TD width="15" align="center">i</TD></TR></TABLE></TD></TR></TABLE></TD></TR></TABLE>
+
+searchOptions
+Two possible search options:
+Deux options de recherche possibles:
+
+invalidText
+ERROR: ignoring invalid text outline request
+ERREUR: ignorer la demande de plan de texte non valide
+

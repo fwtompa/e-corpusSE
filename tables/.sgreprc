@@ -1,0 +1,173 @@
+## File: example.macros
+# Author: PK & JJ March 1998
+# Description: general m4 macro definitions for sgrep
+# For documentation on these macros see
+#         http://www.cs.helsinki.fi/~jjaakkol/sgrepsamplerc.html
+# Use this macro to find out which macros there are in a file
+define(MACRO_NAMES,("efine" not in ("(" .. ")") .. "(" __ ( "," .. ")" )))
+
+# SGML macros
+
+define(ELEMENTS, ( stag($1) .. etag($1) or (stag($1) containing "/>") ))
+define(ROOT_ELEMENTS, (outer(elements)))
+define(PARENTS, (elements parenting ($1)))
+define(CHILDREN, (elements childrening ($1)))
+# This is a slower version of STAGS_OF, but it serves as a demonstration of
+# childrening operator
+define(STAGS_OF, ((stag("*") or elements) childrening ($1) equal stag("*")))
+define(ETAGS_OF, ((etag("*") containing last_bytes(1,($1)))))
+define(HAVING_PARENT, ( (elements or ($1)) childrening ($2) ) equal ($1))
+
+# These are general macros used by other macros
+
+# Character macros
+define(NUMERAL,( "1" or "2" or "3" or "4" or "5" or "6" or "7" or "8" or
+"9" or "0" ))
+define(BLANK,( " " or "\t" or "\n" or "\r"))
+define(LOWER,("a"or"b"or"c"or"d"or"e"or"f"or"g"or"h"or"i"or"j"or"k"or"l"
+	or"m"or"n"or"o"or"p"or"q"or"r"or"s"or"t"or"u"or"v"or"x"or"y"or"z"))
+define(UPPER,("A"or"B"or"C"or"D"or"E"or"F"or"G"or"H"or"I"or"J"or"K"or"L"
+	or"M"or"N"or"O"or"P"or"Q"or"T"or"S"or"Y"or"U"or"V"or"X"or"Y"or"Z"))
+
+# Lines
+define(LEND,( "\n" or end ))
+define(LSTART,( "\n" or start))
+define(LINES,( (start .. LEND) or (("\n") _. (LEND)) ))
+# Empty lines
+define(ELINE,( LINE in concat(BLANK)))
+
+# Ordering and containment macros
+
+# First $1 regions of $2 right after $3
+define(REGS_AFTER,( $2 in (($3) .. join($1,$2))))
+# First $1 regions of $2 right before $3
+define(REGS_BEFORE,( $2 in ( join($1,$2) .. ($3))))
+# First possible index in regions
+define(FIRST_I,( (start in ($1)) or (chars ._ ($1))))
+# First $1 in $2:
+define(FIRST_IN,( $1 in ($2) not in
+                  (($1) _. ($1) in ($1 .. ($1) in ($2))) 
+                  or ($1 in ($2) in 
+                  ($1 not in ($2) .. ($1 in ($2)) in ($1 .. ($1))))
+))
+# Second $1 in $2:
+define(SECOND_IN,( $1 in (FIRST_IN($1,$2) .. ($1) in ($2) 
+                           extracting FIRST_IN($1,$2)) ))
+# Third $1 in $2:
+define(THIRD_IN,( $1 in (SECOND_IN($1,$2) .. ($1) in ($2) 
+                           extracting SECOND_IN($1,$2)) ))
+# Last $1 in $2:
+define(LAST_IN,( $1 in ($2) not in
+                  ($1 ._ ($1) in ($1 .. ($1) in ($2))) ))
+# $1 immediately followed by $2:
+define(FBY,( $1 .. ($2) not containing ($1 __ ($2)) ))
+define(ALL,( start .. end ) )
+define(NEXTTO,( ($1) .. ($2) not containing (($1)__($2)) ) )
+define(WORDS,( concat(LOWER) ))
+define(WORD,(($1) equal WORDS))
+
+# mail macros
+define(MAIL_HSTART,( FBY("F" in start, "rom ") or 
+              ("From " in ("\nFrom " extracting "\n" .. ":" .. ":" in LINE) ) ))
+define(MAIL_HEND,( "\n\n" or end ))
+define(MAIL_HEADER,( MAIL_HSTART .. MAIL_HEND ))
+define(MAIL_MESS,( MAIL_HSTART ._ MAIL_HSTART or (MAIL_HSTART .. end) ))
+define(MAIL_BODY, (MAIL_MESS extracting MAIL_HEADER ))
+define(MAIL_FROM,( "\nFrom: " .. LEND extracting ("\n" in "\nFrom: ") ))
+define(MAIL_SUBJ,( "\nSubject: " .. LEND extracting ("\n" in "\nSubject: ") ))
+define(MAIL_TO,( "\nTo: " ._ (LINE containing ":" or MAIL_HEND)
+              extracting ("\n" in "\nTo: ") ))
+define(MAIL_DATE,( "\nDate: " .. LEND extracting ("\n" in "\nDate: ") ))
+
+# News macros
+define(NEWS_START, ( start or (("\n\nFrom ") extracting ("\n\n" in "\n\nFrom "))))
+define(NEWS_ARTICLE,( NEWS_START ._ (NEWS_START or end) ) )
+define(NEWS_HEADER,( NEWS_START .. ("\n" in "\n\n")))
+define(NEWS_BODY,( NEWS_HEADER _. (NEWS_START or end) ))
+define(NEWS_HLINE,("\n$1 " in NEWS_HEADER extracting ("\n" in "\n$1 ") .. LEND))
+define(NEWS_FROM,(NEWS_HLINE(From:)))
+define(NEWS_SUBJ,(NEWS_HLINE(Subject:)))
+define(NEWS_PATH,(NEWS_HLINE(Path:)))
+define(NEWS_GROUPS,(NEWS_HLINE(Newsgroups:)))
+define(NEWS_DATE,(NEWS_HLINE(Date:)))
+define(NEWS_ORG,(NEWS_HLINE(Organization)))
+
+# And finally we need to disable comments entirely, so that a query like
+# 'file("*") containing' "#" will work without interpreting the phrase
+# "#" as a comment. The C-macros require this.
+
+# C macros
+
+changecom
+
+define(C_COMMENTS,( "/*" quote "*/" ) )
+define(C_PREPROCS,(
+start in "#" or "\n#" .. ( ("\n" not in "\\\n") or end )
+) )
+define(C_BLOCKS,("{".."}") not in ( C_COMMENTS ) )
+define(C_PAREN,( "("..")" not in (C_COMMENTS or C_PREPROCS) ))
+
+define(C_FUNCS,( ALL extracting C_BLOCKS extracting C_COMMENTS extracting C_PREPROCS containing C_PAREN not containing ";" ) )
+
+define(HAS,( ($1) containing (INNER($2)) ))
+
+# Macros for searching in Margot manuscripts
+
+define(VERSE,(NAMED_ELEMS(v)))
+define(VERSE2,(VERSE .. VERSE))
+define(WINDOW5,((VERSE2 or start) .. HAS(VERSE,$1))  .. (VERSE2 or end))
+
+define(COLTAG,( NAMED_STAG(coltop) ))
+define(PGTAG,( NAMED_STAG(pgtop) ))
+define(COLEND,( COLTAG or PGTAG ))
+define(COLUMN,( (COLTAG ._ COLEND) or (COLTAG .. end) ))
+define(PAGE,( (PGTAG ._ PGTAG) or (PGTAG .. end) ))
+
+define(COL_FIND,(HAS(COLUMN,$1)) )
+define(PAGE_FIND,(HAS(PAGE, $1)) )
+define(COL_NUM,(COLTAG in (COL_FIND($1)) ))
+
+define(WORK,(NAMED_ELEMS(work)))
+define(TITLE,(NAMED_ELEMS(T)))
+define(TITLE_FIND,(TITLE in (HAS(WORK,($1))) ))
+
+define(CNT_MATCH,($1) )
+define(V_MATCH,(HAS(VERSE,$1)) )
+define(W5_MATCH,(WINDOW5($1)) )
+define(COL_MATCH,(HAS(COLUMN,$1)) )
+define(PAGE_MATCH,(HAS(PAGE,$1)) )
+
+define(PREV_PAGE,((PAGE1 or start) ._ HAS(PAGE1,$1)))
+define(NEXT_PAGE,(HAS(PAGE1,$1) _. (PAGE1 or end)))
+
+# MACROS FOR ALBERTUS DEFINED----------------------------------------
+
+define(TERMS,( concat($1 not containing ($1)) ))
+define(SPAN,( INNER($1 .. ($2 not in ($1))) ))
+
+define(LOC_TAG,( stag("*") containing attribute("loc") )) 
+define(LOC_VAL,( ("[" __ "]") in (attribute("loc") in LOC_TAG) ))
+define(LOC_REG,( (LOC_TAG ._ LOC_TAG) or (LOC_TAG .. end) ))
+
+define(PARA,(ELEMENTS("p") ))
+define(SENT,(ELEMENTS("s") ))
+define(COL,(ELEMENTS("col") ))
+define(PG,(ELEMENTS("page") ))
+
+define(PAGE_A,( (start ._ PG) or (PG ._ PG) or (PG .. end) ))
+define(COLEND_A,( COL or PG ))
+define(COLUMN_A,( (start ._ COL) or (COL ._ COLEND_A) or (COL .. end) ))
+
+define(UNIT_STAG,( "<d:" .. ">" ))
+define(UNIT,( UNIT_STAG ._ UNIT_STAG ))
+
+define(IS_TITLE,( (ELEMENTS("title") or ELEMENTS("synTitle") or ELEMENTS("printTitle") or ELEMENTS("origTitle")) ))
+define(P_OR_TITLE,( PARA or IS_TITLE ))
+
+define(S_MATCH,(HAS(SENT,$1) ))
+define(P_MATCH,(HAS(PARA,$1) ))
+define(COL_MATCH_A,(HAS(COLUMN_A,$1) ))
+define(PAGE_MATCH_A,(HAS(PAGE_A,$1) ))
+define(UNIT_MATCH,(HAS(UNIT,$1) ))
+define(TITLE_MATCH,(HAS(IS_TITLE,$1) ))
+define(P_TITLE_MATCH,(HAS(P_OR_TITLE,$1) ))
