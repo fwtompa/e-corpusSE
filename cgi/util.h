@@ -20,7 +20,7 @@ unsigned char	*fmakeword(FILE *f, char stop, int *cl);
 unsigned char	 x2c(unsigned char *what);
 void	 unescape_url(unsigned char *url);
 void	 plustospace(unsigned char *str);
-int	     rind(char *s, char c);
+int	 rind(char *s, char c);
 /* int	     getline(char *s, int n, FILE *f); */
 void	 send_fd(FILE *f, FILE *fd);
 int	     ind(char *s, char c);
@@ -29,7 +29,8 @@ char*	 url_encode(unsigned char *s);
 
 int	     http_initialize(void);
 unsigned char	*http_val(char* word, int m);
-void http_val_dump (int m, FILE* out);
+unsigned char	*http_nval(char* word, int m);
+void	 http_val_dump (int m, FILE* out);
 void	 http_printf (char* text);
 char* 	 normalize(char* word, int indexed);
 void	 semi2comma(unsigned char *str);

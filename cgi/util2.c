@@ -18,6 +18,19 @@ unsigned char* http_val (char* word, int m){
     return(NULL);
 }
 
+unsigned char* http_nval (char* word, int m){
+    int x;
+    unsigned char* val;
+
+    val = http_val(word,m);
+    if (val && strlen(val)>0) {
+       x = atoi(val);
+       sprintf(val,"%d",x); // make sure only numeric data is present
+       return(val);
+    }
+    return(NULL);
+}
+
 void http_val_dump (int m, FILE* out){
     int x;
 
@@ -95,8 +108,6 @@ void writeLog(int m) {
       }
    }
    pclose(pipeTemp);
-   buffer[p] = '\0';
-   printf("buffer(%d) = {%s}<br/>",p,buffer);
 
 
    sprintf(command,"echo REMOTE_ADDR=[$REMOTE_ADDR] HTTP_REFERER=[$HTTP_REFERER]");
@@ -111,8 +122,6 @@ void writeLog(int m) {
       }
    }
    pclose(pipeTemp);
-   buffer[p] = '\0';
-   printf("buffer(%d) = {%s}<br/>",p,buffer);
 
    for (x=0;x<=m;x++) {
       if (p + strlen(entries[x].name) + strlen(entries[x].val) + strlen("[=];") > bufsize-2) {

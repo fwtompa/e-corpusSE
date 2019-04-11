@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include "tags.h"
 
 /*
@@ -118,3 +119,24 @@ char* tags_char2ent(unsigned char* in, int quotesOK)
 //     return out;
 // }
 // 
+
+char* tags_char_encode(unsigned char* in)
+{
+	// encode all non-alnumeric characters to defeat cross-site scripting (OWASP)
+	// string is just output, so no need to allocate new space -- can use strbuf
+	
+      int mo = 0;
+      int mi;
+      char*  out;
+	 
+     if (!in) return in; /* no string to convert */
+     for (mi=0;mi<=strlen(in);mi++){
+           if (!in[mi] || isalnum(in[mi])) strbuf[mo++] = in[mi];  //preserve alphanumerics and end-of-string
+           else {
+                snprintf(strbuf+mo,7,"&#x%02hhX;",in[mi]);
+                mo += 6;
+                }
+           }
+     return strbuf;
+}
+

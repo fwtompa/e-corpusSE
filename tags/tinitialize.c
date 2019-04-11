@@ -2,6 +2,7 @@
 //Location: ~/manuprobe/src/tags
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "tags.h"
 #include <sys/types.h>

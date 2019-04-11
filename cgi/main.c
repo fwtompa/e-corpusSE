@@ -1,4 +1,5 @@
 //FILE: main.c
+//LOCATION: "~/codeBase/src/cgi/"
 
 #include <stdio.h>
 #include <errno.h>
@@ -195,7 +196,7 @@ void main(int argc, char *argv[]) {
    // read HTTP parameter values
 //   printf("TESTING: "); http_val_dump(m,stdout); printf("<BR/>\n"); fflush(stdout);
 
-   language = http_val("language",m); // numeric //..frm util.h - util2.c
+   language = http_nval("language",m); // numeric //..frm util.h - util2.c
    /* ignore language */ lang = /*(language) ? atoi(language) :*/ 0; // use English (first language) by default
 
    // choose which format to use for displaying text
@@ -207,19 +208,26 @@ void main(int argc, char *argv[]) {
    for(findex=0; (strcmp(format,tags_formats[findex].descr[lang])) 
       && (strcmp(tags_formats[findex].descr[lang],""));findex++) ;
 
-   exclude = http_val("exclude",m); // numeric //..frm util.h - util2.c
+   exclude = http_nval("exclude",m); // numeric //..frm util.h - util2.c
    excl = (exclude) ? atoi(exclude) : 0;
-   include = http_val("include",m); 
+   if (excl != 0) excl = 1; // can only be 0 or 1
+   include = http_nval("include",m); 
    if (include) excl = 1 - excl; // complement the exclusion
 
-   normalized = http_val("normalized",m); // numeric //..frm util.h - util2.c
+   normalized = http_nval("normalized",m); // numeric //..frm util.h - util2.c
    norm = (normalized) ? atoi(normalized) : 0;
+   if (norm != 0) norm = 1; // can only be 0 or 1
 
-   newstart = http_val("newstart",m); // numeric
+   newstart = http_nval("newstart",m); // numeric
 
    search = tags_char2ent(http_val("search",m),1);  // used a search button
    if (search && strcmp(search,msgs_lookup("cont",lang)) == 0) scroll = search;
-   else scroll = tags_char2ent(http_val("scroll",m),1);
+   else {
+          scroll = tags_char2ent(http_val("scroll",m),1);
+          if (scroll) {
+              if (strcmp(scroll,msgs_lookup("back",lang)) != 0) scroll = msgs_lookup("more",lang);
+          }
+   }
 
    if (!search) {
       browse = tags_char2ent(http_val("browse",m),1); // else browse
@@ -228,12 +236,13 @@ void main(int argc, char *argv[]) {
       }
    else if (strcmp(search,msgs_lookup("exactMatch",lang)) == 0) norm = 0;
    else if (strcmp(search,msgs_lookup("normalize",lang)) == 0) norm = 1;
+   else search = msgs_lookup("cont",lang);
    // else continue button or no button selected => leave normaization unchanged
 
-   start = http_val("start",m); // numeric
+   start = http_nval("start",m); // numeric
    s = (start && !browse) ? atoi(start) : 1;
 
-   quantity = http_val("quantity",m); // numeric
+   quantity = http_nval("quantity",m); // numeric
    q = (browse) ? 1 : ( (quantity) ? atoi(quantity) : 10 );
    if (q<=0||q>50) q = 10;
 
@@ -269,7 +278,7 @@ void main(int argc, char *argv[]) {
       && (strcmp(cgi_scopes[sindex].descr[lang],""));sindex++) ;
    macro = cgi_scopes[sindex].name; // use that scope for searches
 
-   pos = http_val("pos",m); // offset of search in text
+   pos = http_nval("pos",m); // offset of search in text
    if (pos) { // cannot have both pos and word
       i = atoi(pos); // make sure it's an integer
       word = malloc((strlen("\"[(,)]\"") + 2*strlen(pos) + 1)*sizeof(char));
@@ -280,7 +289,7 @@ void main(int argc, char *argv[]) {
    show = http_val("show",m); // name of text, if displaying outline
    if (show) { // specific text to display
       chosenTexts = decodeUTF8(show);
-      if (chosenTexts != show) { // check whether the old char* neesd to be freed
+      if (chosenTexts != show) { // check whether the old char* needs to be freed
          free(show);
          show = chosenTexts;
          }
@@ -295,7 +304,7 @@ void main(int argc, char *argv[]) {
 //         printf("TESTING: currTextIndex=%d, chosenTexts=%s, format=%s, findex=%d, sindex=%d<BR/>\n",currTextIndex,chosenTexts,format,findex,sindex); fflush(stdout);
          }
       else {
-         printf("%s: %s<br/>\n",msgs_lookup("invalidText",lang),show);
+         printf("%s: %s<br/>\n",msgs_lookup("invalidText",lang),tags_char_encode(show));
          free(show);
          show = NULL;
          }
@@ -317,7 +326,7 @@ void main(int argc, char *argv[]) {
             tempIndex = atoi(chosenTexts+pstart);
             textIndexCheck[tempIndex] = 1;
             textsSelected++;
-            for(pstart+=1;chosenTexts[pstart]!=';';pstart++); // advance to end
+            for(pstart+=1;chosenTexts[pstart]!=';' && chosenTexts[pstart];pstart++); // advance to end
             }
       }
    } else {  //searching multiple texts
@@ -368,7 +377,7 @@ void main(int argc, char *argv[]) {
       save_word[0] = '\0';
    }
 
-   printf("<TITLE>%s: %s</TITLE>\n",msgs_lookup("title",lang),(word&&!pos)?word:"??");//ff
+   printf("<TITLE>%s: %s</TITLE>\n",msgs_lookup("title",lang),(word&&!pos)?tags_char_encode(word):"??");//ff
 
    // determine what to search for
    if (browse) { // a specific page
@@ -393,7 +402,7 @@ void main(int argc, char *argv[]) {
       }
    else if (!nestingCheck(word,&numWords)) {
 		// set numWords as a side effect (!!)
-      printf("<P>%s: %s\n",word, msgs_lookup("nesting",lang));//ff
+      printf("<P>%s: %s\n",tags_char_encode(word), msgs_lookup("nesting",lang));//ff
       free(word);
       word = NULL;
       }
@@ -401,7 +410,7 @@ void main(int argc, char *argv[]) {
          count = strlen(word)-1;   //position of the last character
          if (2*count+22+4 > MAX_SEARCH) {
             if (count+24+2 > MAX_SEARCH) {
-                  printf("<P>%s: %s\n",word, msgs_lookup("tooLong",lang));//ff
+                  printf("<P>%s: %s\n",tags_char_encode(word), msgs_lookup("tooLong",lang));//ff
 			// FWT: correction doesn't work with quotes and ops
                   word[MAX_SEARCH-2-24+1] = '*';  // .. add these parts
                   word[MAX_SEARCH-2-24+2] = '\0';
@@ -557,10 +566,10 @@ void main(int argc, char *argv[]) {
             printf("<br/>");
             if (numTextsMatched > 1) { // matches in more than one text 
                printf("<p><i>%d (%d) %s",totalMatches, totalInstMatches, msgs_lookup("nMatches",lang));
-               printf(" <a href=%s?chosenTexts=%s",getenv("SCRIPT_NAME"),matchedTexts);
+               printf(" <a href=\"%s?chosenTexts=%s",getenv("SCRIPT_NAME"),matchedTexts);
                printf("&normalized=%d&exclude=%d&language=%d&word=%s&newstart=%d",
    					norm,excl,lang,url_encode(save_word),s); 
-               printf("&quantity=%s&scope=%s&format=%s",
+               printf("&quantity=%s&scope=%s&format=%s\"",
    					quantity,url_encode(scope),url_encode(format)); 
                printf(" target=\"_blank\">");
                printf("%s</a></i>:</p>\n", msgs_lookup("inAllTexts",lang));
@@ -576,11 +585,11 @@ void main(int argc, char *argv[]) {
                   else
                      printf("%d (%d) %s",textMatches[currTextIndex],textInstMatches[currTextIndex],
 					msgs_lookup("nMatches",lang));
-                  printf(" <a href=%s?chosenTexts=%d",
+                  printf(" <a href=\"%s?chosenTexts=%d",
    					getenv("SCRIPT_NAME"),currTextIndex);
                   printf("&normalized=%d&exclude=%d&language=%d&word=%s&newstart=%d",
    					norm,excl,lang,url_encode(save_word),s); 
-                  printf("&quantity=%s&scope=%s&format=%s",
+                  printf("&quantity=%s&scope=%s&format=%s\"",
    				quantity,url_encode(scope),url_encode(format)); 
                   printf(" target=\"_blank\">");
                   printf("%s</a><br/>\n",
@@ -649,7 +658,7 @@ void main(int argc, char *argv[]) {
                // get the matching page (no normalization of page reference)
                pipePage = engine_findall(browseQuery, texts_tbl[currTextIndex].internal_name, 0);
                if (!advanceN(pipePage, 1)) {
-                  printf("No page found for browsing with %s in %s%s<BR/>", browseQuery,
+                  printf("No page found for browsing with %s in %s%s<BR/>", tags_char_encode(browseQuery),
                                    (norm?"normalized ":""), texts_tbl[currTextIndex].internal_name);
                   cgi_error("aborting","main");
                }
@@ -741,11 +750,11 @@ void main(int argc, char *argv[]) {
                      printf("<li>");
                      if(foundLoc) { // location information available
                         location = get_match(pipeLocVals->begin,pipeLocVals->end,datafile->file);
-                        printf("<a href=%s?browse=%s&chosenTexts=%d",
+                        printf("<a href=\"%s?browse=%s&chosenTexts=%d",
       			   getenv("SCRIPT_NAME"),url_encode(location),currTextIndex);
                         printf("&normalized=%d&exclude=%d&language=%d&word=%s&newstart=%d",
                            norm,excl,lang,pos?"":url_encode(save_word),s);
-                        printf("&quantity=%s&scope=%s&format=%s>",
+                        printf("&quantity=%s&scope=%s&format=%s\">",
                            quantity,url_encode(scope),url_encode(format));
                         semi2comma(location); // commas in citation format but not in search string
                         printf("%s%s</a><br/>\n",
@@ -759,7 +768,7 @@ void main(int argc, char *argv[]) {
                   else if (browse) {
                      semi2comma(browse); // use commas for printing browsing location
                      printf("<b>%s</b>",texts_tbl[currTextIndex].display_text[lang]);
-                     printf("%s<br/>\n",browse); // print browsing location
+                     printf("%s<br/>\n",tags_char_encode(browse)); // print browsing location
                      printf("<TABLE><TR><TD>");
                      }
                   fflush(stdout);
@@ -931,7 +940,7 @@ void main(int argc, char *argv[]) {
    // Word
    printf("<TR>");//ff
    printf("<TD>%s</TD>",msgs_lookup("word",lang));//ff
-   printf("<TD><input type=\"text\" name=\"word\" value=\"%s\" size=90>&nbsp;",pos?"":tags_char2ent(save_word,0) );  // disallow quote marks and ampersands
+   printf("<TD><input type=\"text\" name=\"word\" value=\"%s\" size=90>&nbsp;",pos?"":tags_char_encode(save_word) );  // disallow quote marks and ampersands
    if (norm)
       printf("%s",msgs_lookup("usingNorm",lang));
    else
@@ -1032,9 +1041,6 @@ void main(int argc, char *argv[]) {
                   printf("<input type=\"checkbox\" name=\"textID[%d]\" value=\"%d\"%s>",rpt,rpt,currCheck);
                   printf("<input type=\"submit\" name=\"show\" value=\"%s\">",texts_tbl[rpt].display_text[lang]);
                   }
-//               printf(" <a href=%s?show=%d",getenv("SCRIPT_NAME"),rpt);
-//               printf("&language=%d target=\"_blank\">",lang);
-//               printf("</a><br/>\n");
                printf("</td>\n");
                }
             printf("</tr>");
