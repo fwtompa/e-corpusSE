@@ -69,6 +69,7 @@ int			tags_offset(char *s, int p, char c);
 int		    tags_lookup(char* tag);
 void		tags_convert_char(unsigned char c1, unsigned char c2, char* out);
 char*		tags_char2ent(unsigned char* in, int quotesOK);
+char*		tags_char_encode(unsigned char* in);
 
 
 char*		tags_read_in(char* fname);
